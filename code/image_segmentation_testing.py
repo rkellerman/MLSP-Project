@@ -4,6 +4,8 @@ import sklearn.cluster as cluster
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import cv2
+
 
 def binary_mask(labeled_image, include_lane=False):
 
@@ -46,7 +48,7 @@ if __name__ == '__main__':
 			image_gray = rgb2gray(image)
 			labeled_image = plt.imread(labeled_image_file)
 
-			mask = binary_mask(labeled_image, include_lane=True)
+			true_mask = binary_mask(labeled_image, include_lane=True)
 
 			plt.imshow(image_gray, cmap='gray')
 			plt.show()
@@ -54,7 +56,7 @@ if __name__ == '__main__':
 			print(image.shape)
 
 			image /= 255.0
-			
+
 
 
 			'''
@@ -65,16 +67,16 @@ if __name__ == '__main__':
 
 			print(feature_image.shape)
 
-			kmeans = cluster.KMeans(n_clusters=4).fit(feature_image)
+			#kmeans = cluster.KMeans(n_clusters=4).fit(feature_image)
 
 
-			kmeans_segmented_image = kmeans.cluster_centers_[kmeans.labels_]
+			#kmeans_segmented_image = kmeans.cluster_centers_[kmeans.labels_]
 							
-			kmeans_segmented_image = kmeans_segmented_image.reshape(image.shape)
-			kmeans_segmented_image *= 255.0
+			#kmeans_segmented_image = kmeans_segmented_image.reshape(image.shape)
+			#kmeans_segmented_image *= 255.0
 
-			plt.imshow(kmeans_segmented_image)
-			plt.show()
+			#plt.imshow(kmeans_segmented_image)
+			#plt.show()
 
 			# experimenting with different clustering algorithms
 
@@ -84,27 +86,63 @@ if __name__ == '__main__':
 
 			image *= 255.0
 
-				# loop over the number of segments
-			for numSegments in (25, 50, 100, 200, 300):
-				# apply SLIC and extract (approximately) the supplied number
-				# of segments
-				segments = segmentation.slic(image_gray*255.0, n_segments = numSegments, sigma = 5)
-			 
-				# show the output of SLIC
-				fig = plt.figure("Superpixels -- %d segments" % (numSegments))
-				ax = fig.add_subplot(1, 1, 1)
-				ax.imshow(segmentation.mark_boundaries(color.label2rgb(segments, image_gray, kind='avg'), segments))
-				plt.show()
+			numSegments = 300
+			# apply SLIC and extract (approximately) the supplied number
+			# of segments
+			segments = segmentation.slic(image_gray*255.0, n_segments = numSegments, sigma = 5)
 
-				fig = plt.figure("Superpixels -- %d segments" % (numSegments))
-				ax = fig.add_subplot(1, 1, 1)
+			print(segments)
+			print(np.max(segments))
+
+			fig = plt.figure("Ground Truth")
+			ax = fig.add_subplot(1, 1, 1)
+			
+			ax.imshow(segmentation.mark_boundaries(color.label2rgb(true_mask, image_gray, kind='overlay'), true_mask))
+			plt.show()
+
+
+			fig = plt.figure("Ground Truth + Superpixels")
+			ax = fig.add_subplot(1, 1, 1)
+			
+			ax.imshow(segmentation.mark_boundaries(color.label2rgb(true_mask, image_gray, kind='overlay'), segments))
+			plt.show()
+
+			
+
+			# loop over the unique segment values
+
+			unique_segs = np.unique(segments)
+			segment_labels = np.zeros(len(unique_segs))
+
+			cluster_mask = np.zeros(image_gray.shape[:2], dtype = "uint8")
+
+			for (i, segVal) in enumerate(unique_segs):
+				# construct a mask for the segment
+				seg_mask = np.zeros(image_gray.shape[:2], dtype = "uint8")
+				seg_mask[segments == segVal] = 1.0
+
+				if np.sum(np.bitwise_and(seg_mask, true_mask)) / np.sum(seg_mask) >= 0.5:
+					segment_labels[i] = 1
+					cluster_mask[segments == segVal] = 1
+
 				
-				ax.imshow(segmentation.mark_boundaries(color.label2rgb(mask, image_gray, kind='overlay'), segments))
+
+			# show the output of SLIC
+			fig = plt.figure("Derived Labels for Superpixels from Ground Truth")
+			ax = fig.add_subplot(1, 1, 1)
+			ax.imshow(segmentation.mark_boundaries(color.label2rgb(cluster_mask, image_gray, kind='overlay'), segments))
+			plt.show()
+
+			# show the output of SLIC
+			fig = plt.figure("New overlay using only labeled superpixels")
+			ax = fig.add_subplot(1, 1, 1)
+			ax.imshow(segmentation.mark_boundaries(color.label2rgb(cluster_mask, image_gray, kind='overlay'), cluster_mask))
+			plt.show()
 				
 
 
 
-				plt.show()
+				
 
 
 

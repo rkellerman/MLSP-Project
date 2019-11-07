@@ -84,9 +84,31 @@ if __name__ == '__main__':
 				SLIC Based Segmentation
 			'''
 
-			image *= 255.0
-
 			numSegments = 300
+
+			segments = segmentation.slic(image*255.0, n_segments=numSegments, sigma=5)
+			fig = plt.figure("Color Segmentation and Averaging")
+			ax = fig.add_subplot(1, 1, 1)
+
+			averaged = color.label2rgb(segments, image*255.0, kind='avg')
+
+			ax.imshow(segmentation.mark_boundaries(averaged, segments))
+			plt.show()
+
+			sub_segments = segmentation.slic(averaged, n_segments=3, sigma=10)
+			fig = plt.figure("Superpixel of Averaged")
+			ax = fig.add_subplot(1, 1, 1)
+
+			sub_averaged = color.label2rgb(sub_segments, image*255.0, kind='overlay')
+
+			ax.imshow(sub_averaged)
+			plt.show()
+
+
+
+			
+
+			
 			# apply SLIC and extract (approximately) the supplied number
 			# of segments
 			segments = segmentation.slic(image_gray*255.0, n_segments = numSegments, sigma = 5)

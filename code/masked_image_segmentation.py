@@ -24,10 +24,10 @@ def binary_mask(labeled_image, include_lane=False):
 
 if __name__ == '__main__':
 
-    test_image_file = 'HighwayDriving/Train/TrainSeq10/image/TrainSeq10_RGB_Image_0010.png'
+    test_image_file = '../data/HighwayDriving/Train/TrainSeq10/image/TrainSeq10_RGB_Image_0010.png'
     test_image_edge = 'grad_lbp.png'
 
-    labeled_test_image_file = 'HighwayDriving/Train/TrainSeq10/label/TrainSeq10_ColorLabel_0010.png'
+    labeled_test_image_file = '../data/HighwayDriving/Train/TrainSeq10/label/TrainSeq10_ColorLabel_0010.png'
 
     image = plt.imread(test_image_file)
     edge = plt.imread(test_image_edge)

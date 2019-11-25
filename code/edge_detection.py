@@ -3,7 +3,7 @@ import numpy as np
 from skimage.feature import local_binary_pattern
 from skimage import filters
 
-img = cv2.imread('HighwayDriving/Train/TrainSeq10/image/TrainSeq10_RGB_Image_0010.png')
+img = cv2.imread('../data/HighwayDriving/Train/TrainSeq10/image/TrainSeq10_RGB_Image_0010.png')
 '''
 LBP for texture abstract
 '''

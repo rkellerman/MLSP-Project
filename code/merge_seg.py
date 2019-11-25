@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 '''
 Get the histogram of each texture of each superpixel
 '''
-test_image_file = 'HighwayDriving/Train/TrainSeq10/image/TrainSeq10_RGB_Image_0010.png'
+test_image_file = '../data/HighwayDriving/Train/TrainSeq10/image/TrainSeq10_RGB_Image_0010.png'
 test_image_texture = 'grad_lbp_2.png'
 
 image = plt.imread(test_image_file)

@@ -126,7 +126,7 @@ if __name__ == '__main__':
 			fig = plt.figure("Ground Truth + Superpixels")
 			ax = fig.add_subplot(1, 1, 1)
 			
-			ax.imshow(segmentation.mark_boundaries(color.label2rgb(true_mask, image_gray, kind='overlay'), segments))
+			ax.imshow(segmentation.mark_boundaries(image*255.0, segments))
 			plt.show()
 
 			
@@ -139,6 +139,12 @@ if __name__ == '__main__':
 			cluster_mask = np.zeros(image_gray.shape[:2], dtype = "uint8")
 
 			for (i, segVal) in enumerate(unique_segs):
+
+				# extract features from a segment
+
+
+
+
 				# construct a mask for the segment
 				seg_mask = np.zeros(image_gray.shape[:2], dtype = "uint8")
 				seg_mask[segments == segVal] = 1.0
@@ -153,12 +159,6 @@ if __name__ == '__main__':
 			fig = plt.figure("Derived Labels for Superpixels from Ground Truth")
 			ax = fig.add_subplot(1, 1, 1)
 			ax.imshow(segmentation.mark_boundaries(color.label2rgb(cluster_mask, image_gray, kind='overlay'), segments))
-			plt.show()
-
-			# show the output of SLIC
-			fig = plt.figure("New overlay using only labeled superpixels")
-			ax = fig.add_subplot(1, 1, 1)
-			ax.imshow(segmentation.mark_boundaries(color.label2rgb(cluster_mask, image_gray, kind='overlay'), cluster_mask))
 			plt.show()
 				
 
